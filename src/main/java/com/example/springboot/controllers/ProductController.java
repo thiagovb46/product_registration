@@ -31,10 +31,20 @@ public class ProductController {
     @GetMapping("/products")
     public ResponseEntity<List<ProductModel>> getAllProducts(){
         var products = productRepository.findAll();
+        if(products.isEmpty())
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
         return ResponseEntity.status(HttpStatus.OK).body(products);
+    }
+    @GetMapping("/products/{id}")
+    public ResponseEntity<ProductModel> getOne(@PathVariable(value = "id") UUID id){
+        var product = productRepository.findById(id);
+        if(product.isEmpty())
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
+        return ResponseEntity.status(HttpStatus.OK).body(product.get());
     }
     @DeleteMapping("/products")
     public ResponseEntity deleteOne(@RequestParam UUID productId){
+        productRepository.deleteById(productId);
         return ResponseEntity.status(HttpStatus.OK).build();
     }
 
