@@ -42,11 +42,15 @@ public class ProductController {
     }
     @DeleteMapping("/products/{id}")
     public ResponseEntity deleteOne(@PathVariable(value = "id") UUID id){
+        var product = productRepository.findById(id);
+        if(product.isEmpty())
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
         productRepository.deleteById(id);
         return ResponseEntity.status(HttpStatus.OK).build();
     }
     @PutMapping("/products/{id}")
-    public ResponseEntity<ProductModel> updateOne(@PathVariable (value = "id") UUID id, @RequestBody ProductRecordDto productDto){
+    public ResponseEntity<ProductModel> updateOne(@PathVariable (value = "id") UUID id,
+                                                  @Valid @RequestBody ProductRecordDto productDto){
         var product = productRepository.findById(id);
         if(product.isEmpty())
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
@@ -55,5 +59,4 @@ public class ProductController {
         productRepository.save(productModel);
         return ResponseEntity.status(HttpStatus.OK).body(productModel);
     }
-
 }
